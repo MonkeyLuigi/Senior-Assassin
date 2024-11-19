@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Senior Assassin Game</title>
-    <script src="https://apis.google.com/js/api.js"></script> <!-- Google API script -->
+    <title>Senior Assassin</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Welcome to Senior Assassin Game!</h1>
-    <button id="resumeGame">Resume Game</button>
-    <button id="startNewGame">Start New Game</button>
+    <h1>Senior Assassin</h1>
+    <div id="auth-container">
+        <button id="newGameButton">New Game</button>
+        <button id="resumeGameButton">Resume Game</button>
+    </div>
 
-    <!-- Place this at the bottom to ensure elements are available when the script runs -->
-    <script src="script.js"></script> <!-- Main logic -->
+    <!-- Google Sign-In button -->
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <button id="signOutButton" style="display:none;" onclick="signOut()">Sign Out</button>
 </body>
 </html>
