@@ -27,7 +27,7 @@ function checkSignInStatus() {
 
 // Fetch player data from the Google Sheet
 function fetchPlayerData() {
-  const spreadsheetId = 'YOUR_SHEET_ID'; // Replace with your Google Sheet ID
+  const spreadsheetId = '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE'; // Replace with your Google Sheet ID
   const range = 'Sheet1!A2:D'; // Adjust the range based on where your player data is
 
   gapi.client.sheets.spreadsheets.values.get({
