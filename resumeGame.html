@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Game</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <script src="resumeGame.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Game</title>
 </head>
 <body>
-    <h1>Resume Game</h1>
-    <div id="gameData"></div>
+  <h1>Create a New Game</h1>
+  <form id="player-form">
+    <label for="player-name">Player Name:</label>
+    <input type="text" id="player-name" required>
+    <br>
+    <label for="player-contact">Contact Info:</label>
+    <input type="text" id="player-contact" required>
+    <br>
+    <label for="player-image">Image URL:</label>
+    <input type="url" id="player-image">
+    <br>
+    <button type="submit">Add Player</button>
+  </form>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="newGame.js"></script>
 </body>
 </html>
