@@ -5,7 +5,7 @@ function onClientLoad() {
 
 function initClient() {
   gapi.client.init({
-    apiKey: 'YOUR_API_KEY', // Replace with your API key
+    apiKey: 'AIzaSyCvd2tJiLia280MuWpa6EZm29kdeyIU3C8', // Replace with your API key
     clientId: 'YOUR_CLIENT_ID', // Replace with your Client ID
     scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
     discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
