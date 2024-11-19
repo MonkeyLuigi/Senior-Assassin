@@ -1,66 +1,65 @@
-let currentUser = null; // To store the current user details
+// Google Client Config
+const CLIENT_ID = '825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyCvd2tJiLia280MuWpa6EZm29kdeyIU3C8';
+const SPREADSHEET_ID = '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE';
+const DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
+const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
 
-// Function to initialize the Google API client
 function initClient() {
-    gapi.load('client:auth2', () => {
-        gapi.auth2.init({
-            client_id: '825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com',  // Replace with your Google Client ID
-            scope: 'https://www.googleapis.com/auth/spreadsheets'
-        }).then(() => {
-            updateUI();
-        }).catch((error) => {
-            console.error('Error initializing Google API client:', error);
+    gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES,
+    }).then(() => {
+        const authInstance = gapi.auth2.getAuthInstance();
+        const signInDiv = document.getElementById('g-signin2');
+
+        // Render Google Sign-In Button
+        gapi.signin2.render(signInDiv, {
+            scope: SCOPES,
+            width: 240,
+            height: 50,
+            longtitle: true,
+            theme: "dark",
         });
+
+        authInstance.isSignedIn.listen(updateSigninStatus);
+        updateSigninStatus(authInstance.isSignedIn.get());
+    }).catch(error => {
+        console.error("Error initializing Google API client:", error);
     });
 }
 
-// Function to update UI after successful sign-in
-function updateUI() {
-    const auth2 = gapi.auth2.getAuthInstance();
-    if (auth2.isSignedIn.get()) {
-        currentUser = auth2.currentUser.get();
-        console.log('User signed in:', currentUser.getBasicProfile().getName());
-        document.getElementById('signOutButton').style.display = 'inline-block';
+function updateSigninStatus(isSignedIn) {
+    if (isSignedIn) {
+        console.log("User signed in!");
     } else {
-        document.getElementById('signOutButton').style.display = 'none';
+        console.log("User not signed in!");
     }
 }
 
-// Function to handle Google Sign-In success
-function onSignIn(googleUser) {
-    currentUser = googleUser.getBasicProfile();
-    console.log("ID Token: " + googleUser.getAuthResponse().id_token);
-    updateUI();
+// Load the Google API library and initialize the client
+function handleClientLoad() {
+    gapi.load('client:auth2', initClient);
 }
 
-// Function to handle Sign-Out
-function signOut() {
-    const auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(() => {
-        console.log("User signed out.");
-        currentUser = null;
-        updateUI();
-    });
-}
-
-// Event listeners for New Game and Resume Game buttons
-document.getElementById('newGameButton').addEventListener('click', () => {
-    if (currentUser) {
-        window.location.href = "newGame.html"; // Redirect to new game page
-    } else {
-        alert('Please sign in first');
+// Attach handlers to buttons
+document.getElementById("new-game").addEventListener("click", () => {
+    if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+        alert("Please sign in first!");
+        return;
     }
+    window.location.href = "new-game.html";
 });
 
-document.getElementById('resumeGameButton').addEventListener('click', () => {
-    if (currentUser) {
-        window.location.href = "resumeGame.html"; // Redirect to resume game page
-    } else {
-        alert('Please sign in first');
+document.getElementById("resume-game").addEventListener("click", () => {
+    if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+        alert("Please sign in first!");
+        return;
     }
+    window.location.href = "edit-game.html";
 });
 
-// Load the Google API client after the page loads
-window.onload = function() {
-    initClient();
-};
+// Ensure the Google API is loaded
+window.addEventListener('load', handleClientLoad);
