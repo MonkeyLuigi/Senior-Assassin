@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add event listeners to buttons
     newGameButton.addEventListener("click", () => {
         console.log("New game started.");
-        window.location.href = "new_game.html";
+        window.location.href = "newGame.html";
     });
 
     resumeGameButton.addEventListener("click", resumeGame);
@@ -33,11 +33,11 @@ function resumeGame() {
             const authInstance = gapi.auth2.getAuthInstance();
             if (authInstance.isSignedIn.get()) {
                 console.log("User signed in. Fetching game data...");
-                window.location.href = "edit_game.html";
+                window.location.href = "resumeGame.html";
             } else {
                 console.log("User not signed in. Prompting login...");
                 authInstance.signIn().then(() => {
-                    window.location.href = "edit_game.html";
+                    window.location.href = "resumeGame.html";
                 });
             }
         }).catch(error => {
