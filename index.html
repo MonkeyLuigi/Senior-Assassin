@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senior Assassin</title>
+
     <!-- Load Google API Platform Library -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <!-- Provide Client ID for Google Sign-In -->
-    <meta name="825538423774" content="825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,6 +16,13 @@
         }
         #g-signin2 {
             margin-top: 20px;
+        }
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -28,9 +35,26 @@
     <button id="resume-game">Resume Game</button>
 
     <!-- Google Sign-In Button -->
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <div id="google-sign-in"></div>
 
     <!-- Include JavaScript -->
+    <script>
+        // Google Sign-In setup
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com",
+                callback: onSignIn
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("google-sign-in"),
+                { theme: "outline", size: "large" } // Customize button
+            );
+        };
+
+        function onSignIn(googleUser) {
+            console.log("User signed in:", googleUser);
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
