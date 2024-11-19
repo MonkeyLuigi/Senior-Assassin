@@ -1,30 +1,20 @@
-(function() {
-    // Add player to Google Sheets
-    function addPlayerToSheet(playerName, contactInfo, imageUrl) {
-        const data = [
-            [playerName, contactInfo, imageUrl, '']
-        ];
+document.getElementById('newPlayerForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-        gapi.client.sheets.spreadsheets.values.append({
-            spreadsheetId: '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE', // Replace with your actual Spreadsheet ID
-            range: 'Sheet1!A2:D', // Adjust range based on your data
-            valueInputOption: 'RAW',
-            resource: {
-                values: data,
-            }
-        }).then((response) => {
-            console.log('Player added:', response);
-        });
+    const playerName = document.getElementById('name').value;
+    const contactInfo = document.getElementById('contact').value;
+    const imageUrl = document.getElementById('image').value;
+
+    if (playerName && contactInfo) {
+        // Add player to Google Sheets
+        addPlayerToGoogleSheets(playerName, contactInfo, imageUrl);
+    } else {
+        alert('Please fill in all required fields');
     }
+});
 
-    // Handle the new game form submission
-    document.getElementById('newGameForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const playerName = document.getElementById('playerName').value;
-        const contactInfo = document.getElementById('contactInfo').value;
-        const imageUrl = document.getElementById('imageUrl').value;
-
-        addPlayerToSheet(playerName, contactInfo, imageUrl);
-    });
-})();
+function addPlayerToGoogleSheets(name, contact, imageUrl) {
+    // Your code for interacting with Google Sheets API to add data
+    console.log(`Adding player: ${name}, ${contact}, ${imageUrl}`);
+    // You would typically use the Google Sheets API here to save data
+}
