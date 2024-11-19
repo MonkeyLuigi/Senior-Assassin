@@ -1,72 +1,66 @@
-(function() {
-    // Google API credentials
-    const CLIENT_ID = '825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com'; // Replace with your actual Client ID
-    const API_KEY = 'AIzaSyCvd2tJiLia280MuWpa6EZm29kdeyIU3C8';     // Replace with your actual API Key
-    const SPREADSHEET_ID = '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE'; // Replace with your actual Spreadsheet ID
-    const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+let currentUser = null; // To store the current user details
 
-    let GoogleAuth;
-
-    // Initialize Google API client
-    function start() {
-    gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        scope: SCOPES,
-        discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
-    }).then(function() {
-        GoogleAuth = gapi.auth2.getAuthInstance();
-    }).catch(function(error) {
-        console.error('Error initializing Google API client:', error);
-    });
-}
-
-function loadClient() {
-    gapi.load("client:auth2", start);
-}
-
-window.onload = loadClient;
-
-
-    // Function to get data from Google Sheets (resume game)
-    function resumeGame() {
-        if (!GoogleAuth.isSignedIn.get()) {
-            GoogleAuth.signIn();
-        }
-
-        gapi.client.sheets.spreadsheets.values.get({
-            spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A2:D', // Adjust range based on your data
-        }).then((response) => {
-            console.log('Data from sheet:', response.result.values);
-            // Process the data and show/edit player information
-            window.location.href = "editGame.html"; // Redirect to the edit page
+// Function to initialize the Google API client
+function initClient() {
+    gapi.load('client:auth2', () => {
+        gapi.auth2.init({
+            client_id: 'YOUR_CLIENT_ID',  // Replace with your Google Client ID
+            scope: 'https://www.googleapis.com/auth/spreadsheets'
+        }).then(() => {
+            updateUI();
+        }).catch((error) => {
+            console.error('Error initializing Google API client:', error);
         });
-    }
-
-    // Function to start a new game (navigate to new game page)
-    function startNewGame() {
-        window.location.href = "newGame.html"; // Redirect to new game page
-    }
-
-    // Wait for the DOM to fully load before adding event listeners
-    document.addEventListener('DOMContentLoaded', function() {
-        const resumeButton = document.getElementById('resumeGame');
-        const newGameButton = document.getElementById('startNewGame');
-
-        if (resumeButton) {
-            resumeButton.addEventListener('click', resumeGame);
-        } else {
-            console.error('Resume Game button not found!');
-        }
-
-        if (newGameButton) {
-            newGameButton.addEventListener('click', startNewGame);
-        } else {
-            console.error('Start New Game button not found!');
-        }
     });
+}
 
-    // Load the Google API client when the window is loaded
-    window.onload = loadClient;
-})();
+// Function to update UI after successful sign-in
+function updateUI() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    if (auth2.isSignedIn.get()) {
+        currentUser = auth2.currentUser.get();
+        console.log('User signed in:', currentUser.getBasicProfile().getName());
+        document.getElementById('signOutButton').style.display = 'inline-block';
+    } else {
+        document.getElementById('signOutButton').style.display = 'none';
+    }
+}
+
+// Function to handle Google Sign-In success
+function onSignIn(googleUser) {
+    currentUser = googleUser.getBasicProfile();
+    console.log("ID Token: " + googleUser.getAuthResponse().id_token);
+    updateUI();
+}
+
+// Function to handle Sign-Out
+function signOut() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(() => {
+        console.log("User signed out.");
+        currentUser = null;
+        updateUI();
+    });
+}
+
+// Event listeners for New Game and Resume Game buttons
+document.getElementById('newGameButton').addEventListener('click', () => {
+    if (currentUser) {
+        window.location.href = "newGame.html"; // Redirect to new game page
+    } else {
+        alert('Please sign in first');
+    }
+});
+
+document.getElementById('resumeGameButton').addEventListener('click', () => {
+    if (currentUser) {
+        window.location.href = "resumeGame.html"; // Redirect to resume game page
+    } else {
+        alert('Please sign in first');
+    }
+});
+
+// Load the Google API client after the page loads
+window.onload = function() {
+    initClient();
+};
