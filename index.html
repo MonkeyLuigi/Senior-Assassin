@@ -4,18 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senior Assassin</title>
+    <!-- Load Google API Platform Library -->
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <script src="script.js" defer></script>
+    <!-- Provide Client ID for Google Sign-In -->
+    <meta name="825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #g-signin2 {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Senior Assassin</h1>
-    <div id="auth-container">
-        <button id="newGameButton">New Game</button>
-        <button id="resumeGameButton">Resume Game</button>
-    </div>
+    <h1>Welcome to Senior Assassin</h1>
+    <p>Select an option to continue:</p>
 
-    <!-- Google Sign-In button -->
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    <button id="signOutButton" style="display:none;" onclick="signOut()">Sign Out</button>
+    <!-- Buttons -->
+    <button id="new-game">Start New Game</button>
+    <button id="resume-game">Resume Game</button>
+
+    <!-- Google Sign-In Button -->
+    <div id="g-signin2"></div>
+
+    <!-- Include JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
