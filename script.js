@@ -4,7 +4,7 @@ let currentUser = null; // To store the current user details
 function initClient() {
     gapi.load('client:auth2', () => {
         gapi.auth2.init({
-            client_id: 'YOUR_CLIENT_ID',  // Replace with your Google Client ID
+            client_id: '825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com',  // Replace with your Google Client ID
             scope: 'https://www.googleapis.com/auth/spreadsheets'
         }).then(() => {
             updateUI();
