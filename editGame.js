@@ -1,30 +1,66 @@
-(function() {
-    // Function to update player info in Google Sheets
-    function updatePlayerInfo(playerName, contactInfo, imageUrl) {
-        const data = [
-            [playerName, contactInfo, imageUrl, '']
-        ];
+// Ensure the Google API client is loaded and authenticated
+function onClientLoad() {
+  gapi.load('client:auth2', initClient);
+}
 
-        gapi.client.sheets.spreadsheets.values.update({
-            spreadsheetId: '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE', // Replace with your actual Spreadsheet ID
-            range: 'Sheet1!A2:D', // Adjust range based on your data
-            valueInputOption: 'RAW',
-            resource: {
-                values: data,
-            }
-        }).then((response) => {
-            console.log('Player info updated:', response);
-        });
+function initClient() {
+  gapi.client.init({
+    apiKey: 'YOUR_API_KEY', // Replace with your API key
+    clientId: 'YOUR_CLIENT_ID', // Replace with your Client ID
+    scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+  }).then(function () {
+    console.log("Google API Client Initialized");
+  }).catch(function (error) {
+    console.error("Error initializing Google API client:", error);
+  });
+}
+
+// Check if user is signed in
+function checkSignInStatus() {
+  if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+    fetchPlayerData(); // If signed in, fetch player data
+  } else {
+    console.log('User not signed in.');
+  }
+}
+
+// Fetch player data from the Google Sheet
+function fetchPlayerData() {
+  const spreadsheetId = 'YOUR_SHEET_ID'; // Replace with your Google Sheet ID
+  const range = 'Sheet1!A2:D'; // Adjust the range based on where your player data is
+
+  gapi.client.sheets.spreadsheets.values.get({
+    spreadsheetId: spreadsheetId,
+    range: range,
+  }).then(function (response) {
+    const data = response.result.values;
+    if (data && data.length > 0) {
+      displayPlayerData(data); // Call a function to display data
+    } else {
+      console.log('No player data found.');
     }
+  }).catch(function (error) {
+    console.error("Error fetching player data:", error);
+  });
+}
 
-    // Handle the edit game form submission
-    document.getElementById('editGameForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const playerName = document.getElementById('editPlayerName').value;
-        const contactInfo = document.getElementById('editContactInfo').value;
-        const imageUrl = document.getElementById('editImageUrl').value;
-
-        updatePlayerInfo(playerName, contactInfo, imageUrl);
+// Display player data in a table or a list on the page
+function displayPlayerData(players) {
+  const table = document.getElementById('player-data');
+  players.forEach(function(player) {
+    const row = table.insertRow();
+    player.forEach(function(cellData) {
+      const cell = row.insertCell();
+      cell.textContent = cellData;
     });
-})();
+  });
+}
+
+// Listen for the sign-in status
+document.getElementById('sign-in').addEventListener('click', function() {
+  gapi.auth2.getAuthInstance().signIn().then(checkSignInStatus);
+});
+
+// Call this function when the page loads to initiate the Google API client
+window.onload = onClientLoad;
