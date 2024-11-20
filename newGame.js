@@ -1,57 +1,86 @@
-// Ensure the Google API client is loaded and authenticated
-function onClientLoad() {
-  gapi.load('client:auth2', initClient);
-}
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Ensure the button exists before trying to add an event listener
+    const startGameButton = document.getElementById('start-game');
+    const resumeGameButton = document.getElementById('resume-game');
 
-function initClient() {
-  gapi.client.init({
-    apiKey: 'AIzaSyCvd2tJiLia280MuWpa6EZm29kdeyIU3C8', // Replace with your API key
-    clientId: '825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com', // Replace with your Client ID
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-  }).then(function () {
-    console.log("Google API Client Initialized");
-  }).catch(function (error) {
-    console.error("Error initializing Google API client:", error);
-  });
-}
+    // Add the event listener for starting a new game
+    if (startGameButton) {
+        startGameButton.addEventListener('click', () => {
+            console.log('Starting a new game');
 
-// Append new player data to the Google Sheet
-function addNewPlayer(name, contactInfo, imageUrl, status = "Alive") {
-  const spreadsheetId = '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE'; // Replace with your Google Sheet ID
-  const range = 'Sheet1!A:D'; // Adjust the range based on your sheet structure
-  const values = [[name, contactInfo, imageUrl, status]]; // Player data
+            // Create a new Google Sheet to store the player's data for a new game
+            createNewGameSheet().then(sheetId => {
+                console.log(`New game created with Sheet ID: ${sheetId}`);
+                // Redirect to the new game page or open the new sheet for player details
+                window.location.href = `newGamePage.html?sheetId=${sheetId}`;
+            }).catch(error => {
+                console.error('Error creating new game sheet:', error);
+            });
+        });
+    } else {
+        console.error('Start game button not found!');
+    }
 
-  const request = gapi.client.sheets.spreadsheets.values.append({
-    spreadsheetId: spreadsheetId,
-    range: range,
-    valueInputOption: 'RAW',
-    resource: { values: values },
-  });
+    // Add the event listener for resuming an existing game
+    if (resumeGameButton) {
+        resumeGameButton.addEventListener('click', () => {
+            console.log('Resuming the game');
 
-  request.then(function (response) {
-    console.log('New player added successfully:', response);
-    alert("Player added successfully!");
-  }).catch(function (error) {
-    console.error("Error adding new player:", error);
-    alert("Failed to add player. Check console for details.");
-  });
-}
-
-// Handle form submission
-document.getElementById('player-form').addEventListener('submit', function (event) {
-  event.preventDefault();
-
-  const name = document.getElementById('player-name').value;
-  const contactInfo = document.getElementById('player-contact').value;
-  const imageUrl = document.getElementById('player-image').value;
-
-  if (name && contactInfo) {
-    addNewPlayer(name, contactInfo, imageUrl);
-  } else {
-    alert("Name and contact info are required!");
-  }
+            // Check if the user is signed in and can access their Google Sheets
+            if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                const userEmail = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getEmail();
+                resumeGame(userEmail).then(() => {
+                    console.log('Game resumed successfully');
+                    // Redirect to the game page where they can continue editing their data
+                    window.location.href = 'editGamePage.html';
+                }).catch(error => {
+                    console.error('Error resuming game:', error);
+                });
+            } else {
+                console.log('User is not signed in.');
+            }
+        });
+    } else {
+        console.error('Resume game button not found!');
+    }
 });
 
-// Call this function when the page loads to initiate the Google API client
-window.onload = onClientLoad;
+// Function to create a new Google Sheet for a new game
+function createNewGameSheet() {
+    return new Promise((resolve, reject) => {
+        const spreadsheet = {
+            properties: {
+                title: 'Senior Assassin Game'
+            },
+            sheets: [{
+                properties: {
+                    title: 'Players'
+                }
+            }]
+        };
+
+        // Make an API request to Google Sheets API to create a new sheet
+        gapi.client.sheets.spreadsheets.create(spreadsheet).then(response => {
+            const sheetId = response.result.spreadsheetId;
+            resolve(sheetId);
+        }).catch(error => {
+            reject(error);
+        });
+    });
+}
+
+// Function to resume an existing game using the player's email
+function resumeGame(userEmail) {
+    return new Promise((resolve, reject) => {
+        // Get the sheet ID based on the player's email
+        // For this example, you would need to manage or store the sheet IDs per user (this part would be in your server or database)
+        // Here, we just simulate it by checking against a sample condition
+        const sampleSheetId = '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE'; // Replace with logic to get the correct sheet ID for the user
+
+        if (sampleSheetId) {
+            resolve();
+        } else {
+            reject('No game found for this user');
+        }
+    });
+}
