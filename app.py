@@ -8,9 +8,9 @@ from google.auth.transport.requests import Request
 app = Flask(__name__)
 
 # Set the client ID and secret from Google Cloud Console
-CLIENT_ID = 'YOUR_CLIENT_ID'  # Replace with your client ID
-CLIENT_SECRET = 'YOUR_CLIENT_SECRET'  # Replace with your client secret
-REDIRECT_URI = 'YOUR_REDIRECT_URI'  # Replace with your redirect URI (e.g., http://localhost:5000/oauth2callback)
+CLIENT_ID = '825538423774-seramrvgddmil226bdmsguii9hnu7gn9.apps.googleusercontent.com'  # Replace with your client ID
+CLIENT_SECRET = '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'  # Replace with your client secret
+REDIRECT_URI = 'http://localhost:5000/oauth2callback'  # Replace with your redirect URI (e.g., http://localhost:5000/oauth2callback)
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # This path is where your OAuth 2.0 client secrets file will be located
@@ -60,7 +60,7 @@ def get_google_sheet_data():
     service = build('sheets', 'v4', credentials=credentials)
 
     # Call the Sheets API to get data from a spreadsheet
-    spreadsheet_id = 'YOUR_SPREADSHEET_ID'  # Replace with your spreadsheet ID
+    spreadsheet_id = '1UGn5QjkFzyjeXeLWpfW1jQEL-9_UyvPJlx2bzQF6XmE'  # Replace with your spreadsheet ID
     range_name = 'Sheet1!A1:D10'  # Replace with your desired range
     sheet = service.spreadsheets()
 
