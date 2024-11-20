@@ -1,8 +1,16 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+
+    if (typeof gapi !== 'undefined') {
+        // Initialize the API client
+        gapi.load('client:auth2', initClient);
+    } else {
+        console.error('Google API client library is not loaded');
+    }
     // Ensure the button exists before trying to add an event listener
     const startGameButton = document.getElementById('start-game');
     const resumeGameButton = document.getElementById('resume-game');
 
+    
     // Add the event listener for starting a new game
             console.log('Starting a new game');
 
