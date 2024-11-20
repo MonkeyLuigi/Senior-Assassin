@@ -1,33 +1,63 @@
-document.addEventListener('DOMContentLoaded', (event) => {
+// Initialize the API client
+function initClient() {
+    // Load the Sheets API client
+    gapi.client.init({
+        apiKey: 'AIzaSyCvd2tJiLia280MuWpa6EZm29kdeyIU3C8', // Replace with your API key
+        clientId: '825538423774', // Replace with your Client ID
+        scope: 'https://www.googleapis.com/auth/spreadsheets',
+        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+    }).then(() => {
+        console.log('Google API client initialized');
+        // You can add any other logic needed after the API client is initialized
+    }).catch((error) => {
+        console.error('Error initializing Google API client', error);
+    });
+}
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Ensure gapi is loaded before using it
     if (typeof gapi !== 'undefined') {
-        // Initialize the API client
         gapi.load('client:auth2', initClient);
     } else {
         console.error('Google API client library is not loaded');
     }
+
     // Ensure the button exists before trying to add an event listener
     const startGameButton = document.getElementById('start-game');
     const resumeGameButton = document.getElementById('resume-game');
 
-    
-    // Add the event listener for starting a new game
+    if (startGameButton) {
+        // Add the event listener for starting a new game
+        startGameButton.addEventListener('click', () => {
             console.log('Starting a new game');
 
             // Create a new Google Sheet to store the player's data for a new game
-            if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-                createNewGameSheet().then(sheetId => {
-                    console.log(`New game created with Sheet ID: ${sheetId}`);
-                    // Redirect to the new game page or open the new sheet for player details
-                    window.location.href = `newGamePage.html?sheetId=${sheetId}`;
-                }).catch(error => {
-                    console.error('Error creating new game sheet:', error);
-                });
-            } else {
-                console.log('User is not signed in');
-            }
+            createNewGameSheet().then(sheetId => {
+                console.log(`New game created with Sheet ID: ${sheetId}`);
+                // Redirect to the new game page or open the new sheet for player details
+                window.location.href = `newGamePage.html?sheetId=${sheetId}`;
+            }).catch(error => {
+                console.error('Error creating new game sheet:', error);
+            });
         });
+    }
 
+    if (resumeGameButton) {
+        // Add event listener for resuming a game
+        resumeGameButton.addEventListener('click', () => {
+            const userEmail = 'user@example.com'; // You should dynamically get the user's email after they sign in
+            console.log('Resuming game for:', userEmail);
+
+            resumeGame(userEmail).then(() => {
+                console.log('Resumed game successfully');
+                // Redirect to the existing game page (using the user's sheet ID)
+                window.location.href = `resumeGamePage.html?sheetId=${userEmail}`;
+            }).catch(error => {
+                console.error('Error resuming game:', error);
+            });
+        });
+    }
+});
 
 // Function to create a new Google Sheet for a new game
 function createNewGameSheet() {
