@@ -7,13 +7,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
             console.log('Starting a new game');
 
             // Create a new Google Sheet to store the player's data for a new game
-            createNewGameSheet().then(sheetId => {
-                console.log(`New game created with Sheet ID: ${sheetId}`);
-                // Redirect to the new game page or open the new sheet for player details
-                window.location.href = `newGamePage.html?sheetId=${sheetId}`;
-            }).catch(error => {
-                console.error('Error creating new game sheet:', error);
-            });
+            if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                createNewGameSheet().then(sheetId => {
+                    console.log(`New game created with Sheet ID: ${sheetId}`);
+                    // Redirect to the new game page or open the new sheet for player details
+                    window.location.href = `newGamePage.html?sheetId=${sheetId}`;
+                }).catch(error => {
+                    console.error('Error creating new game sheet:', error);
+                });
+            } else {
+                console.log('User is not signed in');
+            }
         });
 
 
