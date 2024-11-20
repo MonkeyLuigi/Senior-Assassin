@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const resumeGameButton = document.getElementById('resume-game');
 
     // Add the event listener for starting a new game
-    if (startGameButton) {
-        startGameButton.addEventListener('click', () => {
             console.log('Starting a new game');
 
             // Create a new Google Sheet to store the player's data for a new game
@@ -17,33 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 console.error('Error creating new game sheet:', error);
             });
         });
-    } else {
-        console.error('Start game button not found!');
-    }
 
-    // Add the event listener for resuming an existing game
-    if (resumeGameButton) {
-        resumeGameButton.addEventListener('click', () => {
-            console.log('Resuming the game');
-
-            // Check if the user is signed in and can access their Google Sheets
-            if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-                const userEmail = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getEmail();
-                resumeGame(userEmail).then(() => {
-                    console.log('Game resumed successfully');
-                    // Redirect to the game page where they can continue editing their data
-                    window.location.href = 'editGamePage.html';
-                }).catch(error => {
-                    console.error('Error resuming game:', error);
-                });
-            } else {
-                console.log('User is not signed in.');
-            }
-        });
-    } else {
-        console.error('Resume game button not found!');
-    }
-});
 
 // Function to create a new Google Sheet for a new game
 function createNewGameSheet() {
